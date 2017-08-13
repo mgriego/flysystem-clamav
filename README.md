@@ -1,4 +1,7 @@
 # flysystem-clamav
+
+[![Build Status](https://travis-ci.org/mgriego/flysystem-clamav.svg?branch=master)](https://travis-ci.org/mgriego/flysystem-clamav)
+
 This package provides a filesystem adapter for
 [Flysystem](https://github.com/thephpleague/flysystem) that scans files being
 read from and written to an underlying filesystem using the popular
