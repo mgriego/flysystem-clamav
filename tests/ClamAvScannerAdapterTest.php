@@ -34,7 +34,10 @@ class ClamAvScannerAdapterTest extends TestCase
     public function setUp()
     {
         $this->backingMock = Mockery::mock(AdapterInterface::class);
+
         $this->scannerMock = Mockery::mock(ClamAvScanner::class);
+        $this->scannerMock->shouldReceive('startSession');
+
         $this->adapter = new ClamAvScannerAdapter($this->scannerMock, $this->backingMock, false);
     }
 

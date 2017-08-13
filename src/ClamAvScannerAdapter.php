@@ -37,6 +37,9 @@ class ClamAvScannerAdapter implements AdapterInterface
         $this->scanner = $scanner;
         $this->backingAdapter = $backingAdapter;
         $this->scanOnCopy = $scanOnCopy;
+
+        // Start a session so we can scan multiple files on the one socket.
+        $this->scanner->startSession();
     }
 
     /**
