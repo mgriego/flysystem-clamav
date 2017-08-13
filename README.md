@@ -1,4 +1,4 @@
-# flysystem-clamav
+# ClamAV Scanner for Flysystem
 
 [![Build Status](https://travis-ci.org/mgriego/flysystem-clamav.svg?branch=master)](https://travis-ci.org/mgriego/flysystem-clamav)
 
@@ -72,7 +72,7 @@ $filesystem = new Filesystem($adapter);
 ```
 
 Files are scanned during the `read`/`readStream`, `write`/`writeStream`, and
-`update`/`updateStream` operations.  If the adapter is configured as such, file
+`update`/`updateStream` operations.  If the adapter is configured as such, files
 will also be scanned during the `copy` operation.  If ClamAV detects malware in
 the file, a `\mgriego\Flysystem\ClamAV\VirusFoundException` exception will be
 thrown.  The `getReason` method will return the name of the malware that was
