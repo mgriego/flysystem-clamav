@@ -9,6 +9,13 @@ use Xenolope\Quahog\Client as ClamAvScanner;
 
 class ClamAvScannerAdapter implements AdapterInterface
 {
+    const CONFIG_OPTIONS = [
+        'scanOnCopy',
+        'connectTimeout',
+        'readTimeout',
+        'failSilently',
+    ];
+
     /**
      * @var \Xenolope\Quahog\Client
      */
@@ -20,22 +27,61 @@ class ClamAvScannerAdapter implements AdapterInterface
     protected $backingAdapter;
 
     /**
+     * The connect URI for the clamd instance.  Possible values include:
+     * "unix:///path/to/socket" and "tcp://IP-or-hostname:port-number"
+     *
+     * @var string
+     */
+    protected $scannerUri;
+
+    /**
      * Whether to scan a file before copying it.
      *
-     * @var Boolean
+     * @var boolean
      */
     protected $scanOnCopy;
 
     /**
+     * @var integer
+     */
+    protected $connectTimeout = 30;
+
+    /**
+     * @var integer
+     */
+    protected $readTimeout = 30;
+
+    /**
+     * If true, a failure to connect to the configured clamd daemon will NOT
+     * cause the operation to fail.  Otherwise, the default is to fail if the
+     * file cannot be scanned due to a failure to connect.
+     *
+     * @var boolean
+     */
+    protected $failSilently;
+
+    /**
      * Constructor
      *
-     * @param \Xenolope\Quahog\Client $scanner
      * @param \League\Flysystem\AdapterInterface $backingAdapter
+     * @param string $scannerUri
+     * @param array $options
      */
+    public function __construct(AdapterInterface $backingAdapter, $scannerUri, $options = [])
+    {
+        $this->backingAdapter = $backingAdapter;
+        $this->scannerUri = $scannerUri;
+
+        foreach (self::CONFIG_OPTIONS as $option => $value) {
+            if ($isset($options[$option])) {
+                $this->$option = $value;
+            }
+        }
+    }
+
     public function __construct(ClamAvScanner $scanner, AdapterInterface $backingAdapter, $scanOnCopy = false)
     {
         $this->scanner = $scanner;
-        $this->backingAdapter = $backingAdapter;
         $this->scanOnCopy = $scanOnCopy;
 
         // Start a session so we can scan multiple files on the one socket.
@@ -64,6 +110,15 @@ class ClamAvScannerAdapter implements AdapterInterface
         if ($result['status'] !== ClamAvScanner::RESULT_OK) {
             throw new VirusFoundException($path, $result['reason']);
         }
+    }
+
+    protected function connectToScanner()
+    {
+        // Set up socket
+        // Connect with configured timeout
+        // If exception and failSilently, catch it and return false
+        // Otherwise rethrow exception or instantiate Quahog with the new socket and return the Quahog instance
+        // Actually, handle the try/catch in scan/scanStream
     }
 
     /**
